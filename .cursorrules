@@ -1,0 +1,25 @@
+### Current Issue: Stat Updates Not Reflecting Immediately
+Problem: When spending stat points, changes don't appear until page refresh and aren't reflected in battle/training TCGs.
+
+Investigation Plan:
+1. State Synchronization
+   - Track stat update flow from point of change
+   - Verify event propagation to all components
+   - Ensure consistent state structure across components
+
+2. Event Propagation
+   - Monitor custom events reaching components
+   - Validate event handling in TCG components
+   - Check component subscription to state changes
+
+Logging Implementation:
+- Add logs in stat upgrade handling
+- Track event propagation
+- Monitor component updates
+- Verify state consistency
+
+Action Items:
+1. Implement comprehensive logging
+2. Validate assumptions about state flow
+3. Identify exact point of synchronization failure
+4. Design fix based on findings 

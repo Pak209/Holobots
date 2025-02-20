@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 196 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 196 100% 50%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 196 100% 50%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 196 100% 50%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --retro-blue-dark: #1a1a2e;
+    --retro-blue-light: #4a90e2;
+    --retro-red-dark: #2e1a1a;
+    --retro-red-light: #e24a4a;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  @font-face {
+    font-family: 'Press Start 2P';
+    src: url('/fonts/PressStart2P-Regular.ttf') format('truetype');
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-5px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+}
+
+/* Pixel Art Rendering */
+.image-pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Card Glow Effects */
+.shadow-neon-blue {
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5),
+              0 0 20px rgba(74, 144, 226, 0.3);
+}
+
+.shadow-neon-red {
+  box-shadow: 0 0 10px rgba(226, 74, 74, 0.5),
+              0 0 20px rgba(226, 74, 74, 0.3);
+}
+
+/* Pixel Border */
+.pixel-border {
+  border-image-source: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjU1NjVFMjJGQ0U3MTFFQTk0QUZBRTc4QzRBMEI2ODQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjU1NjVFMjNGQ0U3MTFFQTk0QUZBRTc4QzRBMEI2ODQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGNTU2NUUyMEZDRTcxMUVBOTRBRkFFNzhDNEEwQjY4NCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGNTU2NUUyMUZDRTcxMUVBOTRBRkFFNzhDNEEwQjY4NCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PjQ0oZAAAAARSURBVHjaYvz//z8DFAAEGABxGgXQKqI2GAAAAABJRU5ErkJggg==");
+  border-image-slice: 2;
+  border-image-repeat: stretch;
+  border-width: 2px;
+  border-style: solid;
+}
+
+/* Retro Animations */
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.95; }
+  100% { opacity: 1; }
+}
+
+.animate-flicker {
+  animation: flicker 2s infinite;
+}
+
+/* Custom animations */
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 0 0 4px theme('colors.cyan.400'),
+                 0 0 11px theme('colors.cyan.400'),
+                 0 0 19px theme('colors.cyan.400'),
+                 0 0 40px theme('colors.cyan.400');
+  }
+  50% {
+    text-shadow: 0 0 4px theme('colors.cyan.300'),
+                 0 0 8px theme('colors.cyan.300'),
+                 0 0 15px theme('colors.cyan.300'),
+                 0 0 30px theme('colors.cyan.300');
+  }
+}
+
+.animate-neon-pulse {
+  animation: neon-pulse 2s infinite;
+}
+
+/* Retro box styles */
+.retro-box {
+  @apply bg-gray-800 border-2 border-cyan-500/30 rounded-lg overflow-hidden;
+  box-shadow: 0 0 10px rgba(34,211,238,0.1);
+  transition: all 0.2s ease;
+}
+
+.retro-box:hover {
+  box-shadow: 0 0 15px rgba(34,211,238,0.2);
+}
+
+/* Grid layout for stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.stat-box {
+  @apply bg-gray-900/50 p-2 rounded border border-cyan-500/20;
+  font-family: monospace;
+}
+
+.stat-label {
+  @apply text-cyan-400;
+}
+
+/* Button styles */
+.pixel-button {
+  @apply bg-gray-900/50 hover:bg-cyan-500/20 text-xs p-2 rounded border border-cyan-500/20;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.pixel-button:hover {
+  @apply border-cyan-400;
+  transform: translateY(-1px);
+}

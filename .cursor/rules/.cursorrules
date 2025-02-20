@@ -1,0 +1,463 @@
+# Instructions
+
+During your interaction with the user, if you find anything reusable in this project (e.g. version of a library, model name), especially about a fix to a mistake you made or a correction you received, you should take note in the `Lessons` section in the `.cursorrules` file so you will not make the same mistake again. 
+
+You should also use the `.cursorrules` file as a Scratchpad to organize your thoughts. Especially when you receive a new task, you should first review the content of the Scratchpad, clear old different task if necessary, first explain the task, and plan the steps you need to take to complete the task. You can use todo markers to indicate the progress, e.g.
+[X] Task 1
+[ ] Task 2
+
+Also update the progress of the task in the Scratchpad when you finish a subtask.
+Especially when you finished a milestone, it will help to improve your depth of task accomplishment to use the Scratchpad to reflect and plan.
+The goal is to help you maintain a big picture as well as the progress of the task. Always refer to the Scratchpad when you plan the next step.
+
+# Tools
+
+Note all the tools are in python. So in the case you need to do batch processing, you can always consult the python files and write your own script.
+
+## Screenshot Verification
+
+The screenshot verification workflow allows you to capture screenshots of web pages and verify their appearance using LLMs. The following tools are available:
+
+1. Screenshot Capture:
+```bash
+venv/bin/python tools/screenshot_utils.py URL [--output OUTPUT] [--width WIDTH] [--height HEIGHT]
+```
+
+2. LLM Verification with Images:
+```bash
+venv/bin/python tools/llm_api.py --prompt "Your verification question" --provider {openai|anthropic} --image path/to/screenshot.png
+```
+
+Example workflow:
+```python
+from screenshot_utils import take_screenshot_sync
+from llm_api import query_llm
+
+# Take a screenshot
+
+screenshot_path = take_screenshot_sync('https://example.com', 'screenshot.png')
+
+# Verify with LLM
+
+response = query_llm(
+    "What is the background color and title of this webpage?",
+    provider="openai",  # or "anthropic"
+    image_path=screenshot_path
+)
+print(response)
+```
+
+## LLM
+
+You always have an LLM at your side to help you with the task. For simple tasks, you could invoke the LLM by running the following command:
+```
+venv/bin/python ./tools/llm_api.py --prompt "What is the capital of France?" --provider "anthropic"
+```
+
+The LLM API supports multiple providers:
+- OpenAI (default, model: gpt-4o)
+- Azure OpenAI (model: configured via AZURE_OPENAI_MODEL_DEPLOYMENT in .env file, defaults to gpt-4o-ms)
+- DeepSeek (model: deepseek-chat)
+- Anthropic (model: claude-3-sonnet-20240229)
+- Gemini (model: gemini-pro)
+- Local LLM (model: Qwen/Qwen2.5-32B-Instruct-AWQ)
+
+But usually it's a better idea to check the content of the file and use the APIs in the `tools/llm_api.py` file to invoke the LLM if needed.
+
+## Web browser
+
+You could use the `tools/web_scraper.py` file to scrape the web.
+```
+venv/bin/python ./tools/web_scraper.py --max-concurrent 3 URL1 URL2 URL3
+```
+This will output the content of the web pages.
+
+## Search engine
+
+You could use the `tools/search_engine.py` file to search the web.
+```
+venv/bin/python ./tools/search_engine.py "your search keywords"
+```
+This will output the search results in the following format:
+```
+URL: https://example.com
+Title: This is the title of the search result
+Snippet: This is a snippet of the search result
+```
+If needed, you can further use the `web_scraper.py` file to scrape the web page content.
+
+# Lessons
+
+## User Specified Lessons
+
+- You have a python venv in ./venv. Use it.
+- Include info useful for debugging in the program output.
+- Read the file before you try to edit it.
+- Due to Cursor's limit, when you use `git` and `gh` and need to submit a multiline commit message, first write the message in a file, and then use `git commit -F <filename>` or similar command to commit. And then remove the file. Include "[Cursor] " in the commit message and PR title.
+- When moving UI elements, first check if there are existing components with state management before creating new ones.
+
+## Component Reuse and State Management
+- Always check for existing components and their state connections before creating new ones
+- When moving UI elements, preserve their existing state management
+- Avoid duplicating functionality that already exists
+- Look for components that might be rendered elsewhere in the app
+- Consider the component's dependencies and state management when relocating
+
+## Battle UI Structure
+[X] Create separate pre-battle and battle menus
+[X] Identify existing selection components
+[ ] Move existing selection components into holobot boxes
+[ ] Preserve state connections when moving components
+[ ] Ensure proper sizing and styling after relocation
+
+## Next Steps:
+1. Locate the existing selection menus in the BattleScene
+2. Move them into the YOUR HOLOBOT and ENEMY HOLOBOT boxes
+3. Maintain their state connections and event handlers
+4. Adjust styling to match the reference image
+5. Remove any duplicate selection menus we created
+
+## Cursor learned
+
+- For search results, ensure proper handling of different character encodings (UTF-8) for international queries
+- Add debug information to stderr while keeping the main output clean in stdout for better pipeline integration
+- When using seaborn styles in matplotlib, use 'seaborn-v0_8' instead of 'seaborn' as the style name due to recent seaborn version changes
+- Use 'gpt-4o' as the model name for OpenAI's GPT-4 with vision capabilities
+
+## Authentication Flow
+- Avoid using useEffect for navigation after login as it can cause race conditions
+- Initial loading state in AuthContext should be true to prevent unwanted redirects
+- Navigation should happen directly after successful login, not in a side effect
+- Always ensure proper sequencing: auth state update -> localStorage update -> navigation
+- When fixing auth flow issues, consider both new users (no Holobots) and existing users
+- Check both the auth context state and localStorage state for consistency
+- Use React Router's Navigate component for declarative navigation
+- Ensure AuthProvider wraps Router component for proper context access
+
+## State Management
+- Always update both localStorage and auth context when modifying user/holobot data
+- When updating nested state (like holobots within user), ensure the entire state tree is updated
+- Use proper state synchronization between components
+- Implement proper state persistence for game stats (level, XP, etc.)
+- Consider using a more robust state management solution for complex game state
+- Ensure state updates trigger proper re-renders in affected components
+- Use custom events for cross-component state synchronization
+- Implement atomic updates to prevent state inconsistencies
+
+## Game Design
+- Implement level-based progression systems with clear limits and rules
+- Balance stat upgrades to maintain game fairness
+- Provide clear feedback for upgrade actions
+- Use consistent stat scaling across different game mechanics
+- Consider max stat limits for game balance
+- Calculate available stat points based on level (1 point per level)
+- Ensure proper state persistence between battles and sessions
+- Keep UI layout consistent with game's retro aesthetic
+
+## Protected Route Implementation
+- Always return a value in ProtectedRoute components
+- Wrap protected routes with proper authentication checks
+- Use React Router's Navigate component for unauthenticated redirects
+- Consider loading states to prevent flash of unauthorized content
+- Implement consistent route protection across the application
+- Use TypeScript for better type safety in route components
+- Keep protected route logic separate from layout components
+- Ensure proper nesting of providers (Auth -> Router -> Protected Routes)
+
+## Authentication Best Practices
+- Check authentication state before rendering protected content
+- Handle loading states explicitly to prevent unwanted redirects
+- Use consistent auth state management across the application
+- Implement proper error handling for auth failures
+- Consider session persistence and token management
+- Keep auth logic centralized in a dedicated context
+- Use proper TypeScript types for auth state and actions
+- Implement proper logout cleanup and state reset
+
+## Battle System Mechanics
+- Combo chains should scale damage based on consecutive hits and intelligence
+- Defense mode should reduce damage output but increase meter gains
+- Meter gains should scale with combo length and battle mode
+- Special attacks and hack abilities should be balanced with proper cooldowns
+- Battle state should track combo chains and mode effects
+- Counter attacks should reset combo chains
+- Proper state management is crucial for battle mechanics
+- Battle modes should have clear trade-offs (offense vs. defense)
+
+# Scratchpad
+
+## Current Task: Fix XP Bar Update Issue (Continued)
+
+### Problem Analysis:
+- XP bar still not updating after battle rewards (104 XP gained but bar shows 0/1100)
+- XP updates are happening in multiple places:
+  1. Battle completion useEffect
+  2. updateHolobotXp function
+  3. holobotXp state listener useEffect
+
+### Debug Points:
+[X] XP is being awarded (confirmed in battle log)
+[X] Local state updates are happening
+[X] XP progress calculation is correct
+[ ] XP bar component is receiving updated values
+[ ] State synchronization between updates
+
+### State Flow Analysis:
+1. Battle End:
+   - tempLeftXp -> xpGain
+   - Update holobotXp state
+   - Update localStorage
+   - Update battleXpProgress
+   
+2. State Dependencies:
+   - holobotXp[selectedLeftHolobot]
+   - holobotLevels[selectedLeftHolobot]
+   - battleXpProgress
+
+### Identified Issues:
+1. Multiple state updates may be racing:
+   - setHolobotXp
+   - updateHolobotExperience
+   - setBattleXpProgress
+   
+2. XP progress useEffect may be using stale values:
+```typescript
+useEffect(() => {
+  if (selectedLeftHolobot && holobotXp[selectedLeftHolobot] !== undefined) {
+    const progress = getExperienceProgress(
+      holobotXp[selectedLeftHolobot],
+      holobotLevels[selectedLeftHolobot] || 1
+    );
+    setBattleXpProgress(progress);
+  }
+}, [holobotXp, selectedLeftHolobot, holobotLevels]);
+```
+
+### Required Changes:
+[X] Add immediate XP progress update after battle
+[X] Ensure proper state synchronization
+[ ] Fix potential race conditions in state updates
+[ ] Add debug logging for state changes
+[ ] Verify XP progress calculation timing
+
+### Next Steps:
+1. Add console logs to track state updates
+2. Verify XP values at each step:
+   - After battle completion
+   - After holobotXp update
+   - After localStorage update
+   - When ExperienceBar renders
+3. Ensure battleXpProgress updates are not being overwritten
+4. Check if the ExperienceBar component is re-rendering with new props
+
+### Implementation Plan:
+1. Add state update verification
+2. Fix race conditions in XP updates
+3. Ensure proper state synchronization
+4. Add proper error handling
+5. Implement debug mode for state tracking
+
+## Lessons Learned
+
+### State Management
+- State updates may have race conditions when multiple updates happen simultaneously
+- Need to ensure proper order of state updates
+- Consider using a state machine for complex state transitions
+- Add debug logging for state changes in development
+- Verify state updates are propagating to components
+- Check for stale state in useEffect dependencies
+- Consider using useReducer for complex state updates
+- Implement proper error boundaries for state updates
+
+### Experience System
+- Track XP updates through the entire flow
+- Verify XP calculations at each step
+- Ensure proper state synchronization
+- Add debug logging for XP changes
+- Consider using a more robust state management solution
+- Implement proper error handling for XP updates
+- Add visual feedback for state changes
+
+## Current Investigation: XP Bar Update Issue
+
+### Potential Problem Sources
+1. State Update Timing
+2. Event Propagation
+3. XP Calculation Flow
+4. Component Re-rendering
+5. Data Persistence
+6. State Management
+7. Props Flow
+
+### Most Likely Sources
+1. State Update Timing & XP Calculation Flow
+2. Event Propagation & Data Flow
+
+### Logging Strategy
+We will add the following debug logs:
+
+1. XP State Changes:
+   - Before and after XP updates
+   - Current XP values when calculating progress
+   - Final XP values after battle completion
+
+2. Event Propagation:
+   - When holobot-update event is fired
+   - When event handler receives data
+   - When ExperienceBar receives new props
+
+3. Component Updates:
+   - When ExperienceBar renders
+   - When battleXpProgress state changes
+   - When parent component updates XP-related states
+
+### Debug Points
+Key points in the code to add logging:
+1. Battle completion handler
+2. updateHolobotExperience function
+3. holobot-update event handler
+4. ExperienceBar prop updates
+5. getExperienceProgress calculations
+
+### Next Steps
+1. Add comprehensive logging
+2. Monitor state updates and event flow
+3. Identify exact point where XP updates break down
+4. Implement fix based on findings
+5. Add state validation checks
+
+### Implementation Plan
+1. Add debug logging
+2. Verify XP calculation flow
+3. Ensure proper state update sequence
+4. Add state validation
+5. Implement proper error handling
+
+## Current Issues
+
+### XP Bar Not Updating After Battle
+- XP bar remains static after battle completion
+- XP updates are saved but not reflected in UI
+- Multiple state updates may be conflicting
+- Event propagation might not be working as expected
+
+### Root Causes Identified
+1. State Synchronization
+   - Multiple sources of truth for XP state
+   - Local state, localStorage, and auth state not properly synchronized
+   - Potential race conditions between state updates
+
+2. Component Update Flow
+   - XP progress calculations happening at wrong time
+   - State updates not triggering re-renders
+   - Event listener may be missing dependencies
+
+3. Data Flow Issues
+   - XP updates in localStorage not reflecting in UI
+   - Event system not properly propagating updates
+   - Component state not reflecting global state changes
+
+## Action Plan
+
+### 1. Centralize XP State Management
+```typescript
+// Single source of truth for XP state
+const [xpState, setXpState] = useState({
+  currentXp: 0,
+  totalXp: 0,
+  level: 1,
+  progress: 0
+});
+
+// Update all XP related state in one place
+const updateXpState = (newXp: number) => {
+  const newState = calculateXpState(newXp);
+  setXpState(newState);
+  updateStorage(newState);
+  dispatchEvent(newState);
+};
+```
+
+### 2. Improve State Updates
+- Move XP calculations before any state updates
+- Update XP progress state first
+- Then update localStorage and auth state
+- Finally update local component state
+
+### 3. Enhance Event System
+- Add more detailed event payload
+- Ensure proper event order
+- Add error handling for failed updates
+
+### 4. Implementation Steps
+1. Refactor XP state management:
+   ```typescript
+   // In BattleScene.tsx
+   const handleBattleWin = (xpGain: number) => {
+     // Calculate new values first
+     const newXp = currentXp + xpGain;
+     const newLevel = getNewLevel(newXp, currentLevel);
+     const progress = getExperienceProgress(newXp, newLevel);
+
+     // Update UI state immediately
+     setBattleXpProgress(progress);
+
+     // Then update storage and dispatch event
+     updateHolobotExperience(holobotId, xpGain);
+
+     // Finally update local state
+     setHolobotXp(prev => ({
+       ...prev,
+       [selectedHolobot]: newXp
+     }));
+   };
+   ```
+
+2. Add proper error handling:
+   ```typescript
+   try {
+     await updateHolobotExperience(holobotId, xpGain);
+   } catch (error) {
+     console.error('Failed to update XP:', error);
+     // Revert UI state if storage update fails
+     setBattleXpProgress(previousProgress);
+   }
+   ```
+
+3. Improve event handling:
+   ```typescript
+   useEffect(() => {
+     const handleXpUpdate = (event: CustomEvent) => {
+       const { holobotId, newXp, newLevel } = event.detail;
+       if (holobotId === currentHolobotId) {
+         const progress = getExperienceProgress(newXp, newLevel);
+         setBattleXpProgress(progress);
+       }
+     };
+
+     window.addEventListener('xp-update', handleXpUpdate);
+     return () => window.removeEventListener('xp-update', handleXpUpdate);
+   }, [currentHolobotId]);
+   ```
+
+### 5. Testing Steps
+1. Verify XP updates in console logs
+2. Check event propagation order
+3. Confirm UI updates immediately after battle
+4. Validate persistence across page reloads
+5. Test error recovery scenarios
+
+## Next Steps
+1. Implement centralized XP state management
+2. Add comprehensive error handling
+3. Improve event system reliability
+4. Add loading states during updates
+5. Implement optimistic updates
+6. Add rollback mechanism for failed updates
+
+## Monitoring
+- Add detailed logging for XP updates
+- Track event propagation
+- Monitor state synchronization
+- Log error scenarios
+- Track UI update timing
