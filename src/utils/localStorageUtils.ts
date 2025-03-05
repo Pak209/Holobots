@@ -313,11 +313,8 @@ export const applyStatBoost = (
   stat: keyof StatBoosts,
   amount: number
 ): void => {
-  console.log('Starting applyStatBoost:', { holobotId, stat, amount });
-
   const authState = localStorage.getItem('AUTH_STATE');
   if (!authState) {
-    console.error('No auth state found');
     throw new Error('No auth state found');
   }
 
@@ -326,19 +323,11 @@ export const applyStatBoost = (
     const holobot = auth.userData.holobots.find((h: any) => h.id === holobotId);
 
     if (!holobot) {
-      console.error('Holobot not found:', holobotId);
       throw new Error('Holobot not found');
     }
 
-    console.log('Current holobot state:', {
-      holobot,
-      currentBoosts: holobot.statBoosts,
-      availablePoints: holobot.availableStatPoints
-    });
-
     // Initialize statBoosts if it doesn't exist
     if (!holobot.statBoosts) {
-      console.log('Initializing statBoosts');
       holobot.statBoosts = {
         attack: 0,
         defense: 0,
@@ -349,23 +338,16 @@ export const applyStatBoost = (
 
     // Ensure availableStatPoints is initialized
     if (typeof holobot.availableStatPoints === 'undefined') {
-      console.log('Initializing availableStatPoints');
       holobot.availableStatPoints = holobot.level;
     }
 
     if (holobot.availableStatPoints <= 0) {
-      console.error('No available stat points');
       throw new Error('No available stat points');
     }
 
     // Apply the boost
     holobot.statBoosts[stat] += amount;
     holobot.availableStatPoints--;
-
-    console.log('Updated holobot state:', {
-      newBoosts: holobot.statBoosts,
-      remainingPoints: holobot.availableStatPoints
-    });
 
     // Save updated state
     localStorage.setItem('AUTH_STATE', JSON.stringify(auth));
@@ -375,11 +357,13 @@ export const applyStatBoost = (
       detail: {
         holobotId,
         statBoosts: holobot.statBoosts,
-        availableStatPoints: holobot.availableStatPoints
+        availableStatPoints: holobot.availableStatPoints,
+        level: holobot.level,
+        experience: holobot.experience
       }
     }));
   } catch (error) {
-    console.error('Error in applyStatBoost:', error);
+    console.error('Failed to apply stat boost:', error);
     throw error;
   }
 }; 

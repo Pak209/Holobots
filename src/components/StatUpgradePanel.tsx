@@ -3,6 +3,7 @@ import { StatBoosts, MAX_INDIVIDUAL_STAT_BOOST, HP_BOOST_MULTIPLIER, canBoostSta
 import { applyStatBoost } from "@/utils/localStorageUtils";
 import { useToast } from "./ui/use-toast";
 import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface StatUpgradePanelProps {
   holobotId: string;
@@ -22,47 +23,36 @@ export const StatUpgradePanel = ({
   onUpgrade 
 }: StatUpgradePanelProps) => {
   const { toast } = useToast();
+  const { dispatch } = useAuth();
 
-  console.log('StatUpgradePanel Render:', {
-    holobotId,
-    statBoosts,
-    availableStatPoints,
-    experience,
-    requiredXp
-  });
+  useEffect(() => {
+    const handleHolobotUpdate = (event: CustomEvent) => {
+      const { holobotId: updatedId, statBoosts: newBoosts, availableStatPoints: newPoints } = event.detail;
+      if (updatedId === holobotId) {
+        dispatch({ 
+          type: 'UPDATE_USER', 
+          payload: { 
+            holobots: (prevHolobots: any[]) => 
+              prevHolobots.map(h => 
+                h.id === holobotId 
+                  ? { ...h, statBoosts: newBoosts, availableStatPoints: newPoints }
+                  : h
+              )
+          }
+        });
+      }
+    };
+
+    window.addEventListener('holobot-update', handleHolobotUpdate as EventListener);
+    return () => {
+      window.removeEventListener('holobot-update', handleHolobotUpdate as EventListener);
+    };
+  }, [holobotId, dispatch]);
 
   const handleUpgrade = async (stat: keyof StatBoosts) => {
     try {
-      console.log('[StatUpgradePanel] Starting stat upgrade:', {
-        holobotId,
-        stat,
-        currentBoosts: statBoosts,
-        availablePoints: availableStatPoints
-      });
-
       const amount = stat === 'maxHealth' ? HP_BOOST_MULTIPLIER : 1;
-      
-      // Add event listener before applying boost
-      const updateHandler = (event: CustomEvent) => {
-        console.log('[StatUpgradePanel] Received holobot-update event:', event.detail);
-      };
-      window.addEventListener('holobot-update', updateHandler as EventListener);
-      
       await applyStatBoost(holobotId, stat, amount);
-      
-      console.log('[StatUpgradePanel] After applyStatBoost:', {
-        stat,
-        amount,
-        newBoosts: statBoosts,
-        props: {
-          holobotId,
-          statBoosts,
-          availableStatPoints
-        }
-      });
-
-      // Remove event listener after update
-      window.removeEventListener('holobot-update', updateHandler as EventListener);
 
       toast({
         title: "Stat Upgraded",
@@ -70,7 +60,6 @@ export const StatUpgradePanel = ({
       });
 
       if (onUpgrade) {
-        console.log('[StatUpgradePanel] Calling onUpgrade callback');
         onUpgrade();
       }
     } catch (error) {
@@ -82,17 +71,6 @@ export const StatUpgradePanel = ({
       });
     }
   };
-
-  // Add effect to log prop changes
-  useEffect(() => {
-    console.log('[StatUpgradePanel] Props updated:', {
-      holobotId,
-      statBoosts,
-      availableStatPoints,
-      experience,
-      requiredXp
-    });
-  }, [holobotId, statBoosts, availableStatPoints, experience, requiredXp]);
 
   const renderStatButton = (stat: keyof StatBoosts, label: string) => {
     const currentBoost = statBoosts[stat];
